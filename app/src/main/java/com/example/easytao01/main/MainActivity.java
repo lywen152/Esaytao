@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.easytao01.R;
+import com.example.easytao01.commons.ActivityUtils;
 import com.example.easytao01.main.me.MeFragment;
 import com.example.easytao01.main.shop.ShopFragment;
 
@@ -34,20 +35,23 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    ActivityUtils activityUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        activityUtils=new ActivityUtils(this);
         init();
 
     }
 
     void init() {
         viewPager.setAdapter(nolodingAdapter);
+        //刚进来默认显示市场页面
         textViews[0].setSelected(true);
-
+        //viewpager滑动监听用于控制Textview显示
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -56,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                //Textview全部未选择
                 for (TextView textView : textViews) {
                     textView.setSelected(false);
                 }
+                //更改title 设置选择效果
                 tv_title.setText(textViews[position].getText());
                 textViews[position].setSelected(true);
             }
@@ -77,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!isExit) {
             isExit = true;
-            Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            activityUtils.showToast("再按一次退出程序");
             //两秒再次点击返回则退出
             //两秒内没有点击返回，则把isExit设置为false
             viewPager.postDelayed(new Runnable() {
